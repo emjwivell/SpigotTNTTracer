@@ -1,0 +1,3 @@
+[submodule "PublicUtils"]
+	path = PublicUtils
+	url = https://github.com/WOLFI3654/PublicUtils.git

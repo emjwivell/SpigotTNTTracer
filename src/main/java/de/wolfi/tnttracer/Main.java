@@ -1,5 +1,9 @@
 package de.wolfi.tnttracer;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -15,6 +19,13 @@ public class Main extends JavaPlugin{
         this.saveDefaultConfig();
         System.out.println("[TNTTracer] Plugin enabled!");
 
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        Bukkit.getPluginManager().registerEvents(new ListenerInstance((Player) sender),this);
+        ((Player) sender).sendMessage("Start tracking...");
+        return true;
     }
 
     @Override
