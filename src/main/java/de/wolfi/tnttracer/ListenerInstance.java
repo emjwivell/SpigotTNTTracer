@@ -77,6 +77,13 @@ private final HashMap<UUID,Tnt> explosions;
             for(ArmorStand stand : stands)
                 stand.remove();
             HandlerList.unregisterAll(this);
+        }else if(e.getPlayer().equals(this.player) && e.getMessage().equals("/block")){
+            for(Tnt tnt : explosions.values()){
+                for(Location loc : tnt.getLocations()){
+                    loc.getBlock().setType(Material.QUARTZ_BLOCK);
+                }
+                tnt.getLast().getBlock().setType(Material.DIAMOND_BLOCK);
+            }
         }
     }
 }

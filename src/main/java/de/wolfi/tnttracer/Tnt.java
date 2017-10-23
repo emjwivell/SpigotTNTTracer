@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Tnt implements Runnable{
 
     private final TNTPrimed tntPrimed;
-    private final BukkitTask task;
+    private final Thread task;
     private BukkitTask particle;
 
     private final ArrayList<Location> locs;
@@ -22,14 +22,15 @@ public class Tnt implements Runnable{
     public Tnt(TNTPrimed tnt){
         this.tntPrimed = tnt;
         this.locs = new ArrayList<Location>();
-        this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(),this,0,Main.getTickSpeed());
+        this.task = new Thread(this);
+        this.task.start();
     }
 
     public Location getLast(){
         return this.lastLoc;
     }
     public void stop(){
-        this.task.cancel();
+        this.task.interrupt();
         this.lastLoc = this.tntPrimed.getLocation();
     }
 
@@ -37,10 +38,34 @@ public class Tnt implements Runnable{
         this.particle.cancel();
     }
     public void spawnParticles(){
-        this.particle = Bukkit.getScheduler().runTaskTimer(Main.getInstance(),()->{for(Location loc : locs) loc.getWorld().spawnParticle(Particle.FLAME,loc,0);},10,10);
+        this.particle = Bukkit.getScheduler().runTaskTimer(Main.getInstance(),()->{
+            Location prev = null;
+            for(Location loc : locs){
+                if(prev != null) {
+                    if (loc.distanceSquared(prev) > Math.pow(Main.getMinDistance(), 2))
+
+                        loc.getWorld().spawnParticle(Particle.FLAME, loc, 0);
+                        prev = loc;
+                    } else{  loc.getWorld().spawnParticle(Particle.FLAME, loc, 0);
+                            prev = loc;
+                }
+
+            }
+        },10,10);
     }
 
     public void run() {
-        locs.add(this.tntPrimed.getLocation());
+        while(!Thread.currentThread().isInterrupted()) {
+            locs.add(this.tntPrimed.getLocation());
+            try {
+                Thread.sleep(Main.getTickSpeed());
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+    }
+
+    public ArrayList<Location> getLocations() {
+        return locs;
     }
 }

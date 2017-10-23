@@ -16,6 +16,7 @@ public class Main extends JavaPlugin{
     public void onEnable() {
         main = this;
         this.getConfig().addDefault("tickSpeed",5);
+        this.getConfig().addDefault("minDist",3.0D);
         this.saveDefaultConfig();
         System.out.println("[TNTTracer] Plugin enabled!");
 
@@ -36,6 +37,8 @@ public class Main extends JavaPlugin{
     public static Main getInstance(){
         return main;
     }
+
+    public static double getMinDistance(){ return Main.getInstance().getConfig().getDouble("minDist");}
 
     public static long getTickSpeed() {
         return Main.getInstance().getConfig().getLong("tickSpeed");
